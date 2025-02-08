@@ -23,7 +23,7 @@ export const Login = () => {
 
     try {
       await login(loginForm)
-      navigate("/")
+      navigate("/home")
     } catch (error) {
       alert("Ha ocurrido un error")
     }

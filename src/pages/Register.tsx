@@ -26,7 +26,7 @@ export const Register = () => {
     try {
       if (registerForm.password === registerForm.password_confirmation) {
         await register(registerForm)
-        navigate("/")
+        navigate("/home")
       } else {
         alert('Las contraseñas no coinciden')
       }
