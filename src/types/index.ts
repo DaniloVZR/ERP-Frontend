@@ -6,4 +6,9 @@ export type TAuth = {
   password: string,
 }
 
+export type TAuthRegister = TAuth & {
+  name: string
+  password_confirmation: string
+}
+
 export type TTokenFetch = z.infer<typeof tokenSchema>
