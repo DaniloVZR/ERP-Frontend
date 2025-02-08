@@ -6,6 +6,8 @@ import { Register } from "./pages/Register"
 import { LandingPage } from "./pages/LandingPage"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { ToastContainer } from "react-toastify"
+import { Sales } from "./pages/Sales"
+import { Inventory } from "./pages/Inventory"
 
 export const AppRouter = () => {
   return (
@@ -15,6 +17,8 @@ export const AppRouter = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route path="/home" element={<Home />} />
+            <Route path="/sales" element={<Sales />} />
+            <Route path="/inventory" element={<Inventory />} />
           </Route>
         </Route>
 
