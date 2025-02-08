@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { devtools } from "zustand/middleware"
 import { login, logout, register } from "../services/auth"
 import { TAuth, TAuthRegister, TTokenFetch } from "../types"
+import { toast } from "react-toastify"
 
 type ERPStore = {
   token: TTokenFetch
@@ -18,6 +19,8 @@ export const useERPStore = create<ERPStore>()(devtools((set) => ({
     set(() => ({
       token
     }))
+
+    toast.success(token?.message)
   },
   logout: async (token) => {
     await logout(token)

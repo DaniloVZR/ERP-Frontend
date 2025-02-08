@@ -1,51 +1,45 @@
-import { ChangeEvent, FormEvent, useState } from "react";
 import { TAuth } from "../types";
 import { useERPStore } from "../store/store";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 export const Login = () => {
 
   const { login } = useERPStore()
   const navigate = useNavigate()
 
-  const [loginForm, setLoginForm] = useState<TAuth>({
-    email: '',
-    password: '',
-  })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TAuth>()
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    if (Object.values(loginForm).includes('')) {
-      alert('completa todos los campos')
-      return
-    }
-
+  const onSubmit: SubmitHandler<TAuth> = async (data) => {
     try {
-      await login(loginForm)
-      navigate("/home")
+      await login(data);
+      navigate("/home");
     } catch (error) {
-      alert("Ha ocurrido un error")
+      if (error instanceof Error) {
+        toast.error(error.message); // Muestra un mensaje de error
+      } else {
+        toast.error("Unexpected error"); // Muestra un mensaje de error
+      }
     }
-  }
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginForm({
-      ...loginForm,
-      [name]: value,
-    });
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-primary">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-3">
           ERP Stilo
         </h1>
+        <h3 className="text-xl font-bold text-center text-gray-800 mb-6">
+          Login
+        </h3>
         <form
           className="space-y-6"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -54,12 +48,13 @@ export const Login = () => {
             <input
               type="email"
               id="email"
-              name="email"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Email"
-              value={loginForm.email}
-              onChange={handleChange}
+              {...register("email", { required: "You must write your email" })}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+            )}
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
@@ -68,12 +63,13 @@ export const Login = () => {
             <input
               type="password"
               id="password"
-              name="password"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Password"
-              value={loginForm.password}
-              onChange={handleChange}
+              {...register("password", { required: "You must write your password" })}
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+            )}
           </div>
           <div>
             <input

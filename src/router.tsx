@@ -4,6 +4,7 @@ import Home from "./pages/Home"
 import { Login } from "./pages/Login"
 import { Register } from "./pages/Register"
 import { LandingPage } from "./pages/LandingPage"
+import { ToastContainer } from "react-toastify"
 
 export const AppRouter = () => {
   return (
@@ -16,6 +17,7 @@ export const AppRouter = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<LandingPage />} />
       </Routes>
+      <ToastContainer />
     </BrowserRouter>
   )
 }

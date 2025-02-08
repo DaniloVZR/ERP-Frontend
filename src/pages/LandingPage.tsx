@@ -4,7 +4,7 @@ export const LandingPage = () => {
   const navigate = useNavigate(); // Hook para redirección
 
   return (
-    <div className="min-h-screen  flex flex-col items-center justify-center bg-gray-900">
+    <div className="min-h-screen  flex flex-col items-center justify-center bg-primary">
       {/* Header */}
       <header className="text-center mb-12">
         <h1 className="text-6xl font-bold text-white mb-4">

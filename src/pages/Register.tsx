@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { TAuthRegister } from "../types"
 import { useERPStore } from "../store/store"
+import { toast } from "react-toastify"
 
 export const Register = () => {
 
@@ -19,7 +20,7 @@ export const Register = () => {
     e.preventDefault()
 
     if (Object.values(registerForm).includes('')) {
-      alert('completa todos los campos')
+      toast.error("Debes completar todos los campos")
       return
     }
 
@@ -28,7 +29,8 @@ export const Register = () => {
         await register(registerForm)
         navigate("/home")
       } else {
-        alert('Las contraseñas no coinciden')
+        toast.error("Las contraseñas no coinciden")
+
       }
     } catch (error) {
       alert("Ha ocurrido un error")
@@ -44,9 +46,9 @@ export const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-primary">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-gray-800">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-3">
           ERP Stilo
         </h1>
         <h3 className="text-xl font-bold text-center text-gray-800 mb-6">
