@@ -31,7 +31,7 @@ export const logout = async (token: TTokenFetch['data']) => {
 }
 
 export const register = async (userData: TAuthRegister) => {
-  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, userData);
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, userData);
   const result = tokenSchema.safeParse(response.data)
   if (result.success) {
     localStorage.setItem('token', result.data.data)

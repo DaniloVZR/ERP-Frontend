@@ -1,48 +1,45 @@
-import { ChangeEvent, FormEvent, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { TAuthRegister } from "../types"
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useERPStore } from "../store/store"
 import { toast } from "react-toastify"
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid"
+import { TAuthRegister } from "../types"
+import { useState } from "react";
 
 export const Register = () => {
 
   const { register } = useERPStore()
   const navigate = useNavigate()
 
-  const [registerForm, setRegisterForm] = useState<TAuthRegister>({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: ''
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const {
+    register: formRegister,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<TAuthRegister>({
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      password_confirmation: ''
+    }
   })
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    if (Object.values(registerForm).includes('')) {
-      toast.error("Debes completar todos los campos")
-      return
-    }
-
+  const onSubmit: SubmitHandler<TAuthRegister> = async (data) => {
     try {
-      if (registerForm.password === registerForm.password_confirmation) {
-        await register(registerForm)
-        navigate("/home")
+      if (data.password === data.password_confirmation) {
+        await register(data)
+        navigate('/home')
+        toast.success('User created successfully')
       } else {
-        toast.error("Las contraseñas no coinciden")
-
+        toast.error('Passwords do not match')
       }
     } catch (error) {
-      alert("Ha ocurrido un error")
+      console.log(error);
     }
-  }
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setRegisterForm({
-      ...registerForm,
-      [name]: value,
-    });
   }
 
   return (
@@ -56,7 +53,7 @@ export const Register = () => {
         </h3>
         <form
           className="space-y-6"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -65,12 +62,13 @@ export const Register = () => {
             <input
               type="text"
               id="name"
-              name="name"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Name"
-              value={registerForm.name}
-              onChange={handleChange}
+              {...formRegister("name", { required: "Name is required" })}
             />
+            {errors.name && (
+              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+            )}
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -79,40 +77,83 @@ export const Register = () => {
             <input
               type="email"
               id="email"
-              name="email"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Email"
-              value={registerForm.email}
-              onChange={handleChange}
+              {...formRegister("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
             />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+            )}
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Password"
-              value={registerForm.password}
-              onChange={handleChange}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Password"
+                {...formRegister("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                })}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                ) : <EyeSlashIcon className="h-5 w-5 text-gray-500" />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
+            )}
           </div>
           <div>
             <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700">
               Confirm Password
             </label>
-            <input
-              type="password"
-              id="confirm_password"
-              name="password_confirmation"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Confirm Password"
-              value={registerForm.password_confirmation}
-              onChange={handleChange}
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirm_password"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Confirm Password"
+                {...formRegister("password_confirmation", {
+                  required: "Please confirm your password",
+                  validate: (value) =>
+                    value === watch("password") || "Passwords do not match",
+                })}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                ) : <EyeSlashIcon className="h-5 w-5 text-gray-500" />}
+              </button>
+            </div>
+            {errors.password_confirmation && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password_confirmation.message}
+              </p>
+            )}
           </div>
           <div>
             <input

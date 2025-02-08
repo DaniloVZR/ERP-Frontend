@@ -1,13 +1,16 @@
-import { TAuth } from "../types";
-import { useERPStore } from "../store/store";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useERPStore } from "../store/store";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid"
+import { TAuth } from "../types";
 
 export const Login = () => {
 
   const { login } = useERPStore()
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
@@ -60,13 +63,24 @@ export const Login = () => {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Password"
-              {...register("password", { required: "You must write your password" })}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Password"
+                {...register("password", { required: "You must write your password" })}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                ) : <EyeSlashIcon className="h-5 w-5 text-gray-500" />}
+              </button>
+            </div>
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
             )}
